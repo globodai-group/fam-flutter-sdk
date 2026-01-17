@@ -200,7 +200,7 @@ void main() {
     test('should throw after max retries', () async {
       var attempts = 0;
 
-      expect(
+      await expectLater(
         () => retry(
           () async {
             attempts++;
@@ -211,12 +211,14 @@ void main() {
         ),
         throwsException,
       );
+
+      expect(attempts, 3);
     });
 
     test('should respect shouldRetry predicate', () async {
       var attempts = 0;
 
-      expect(
+      await expectLater(
         () => retry(
           () async {
             attempts++;
@@ -228,6 +230,8 @@ void main() {
         ),
         throwsArgumentError,
       );
+
+      expect(attempts, 1);
     });
   });
 

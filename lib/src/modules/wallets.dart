@@ -24,7 +24,8 @@ import 'package:fam_sdk/src/types/types.dart';
 /// ```
 class WalletsModule extends BaseModule {
   /// Creates a wallets module.
-  const WalletsModule(HttpClient client) : super(client, '/api/v1/mangopay/wallets');
+  const WalletsModule(HttpClient client)
+      : super(client, '/api/v1/mangopay/wallets');
 
   /// Creates a new wallet.
   Future<Wallet> create(CreateWalletRequest data) => post(

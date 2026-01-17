@@ -172,9 +172,8 @@ class ValidationException extends ApiException {
   @override
   String toString() {
     if (errors.isEmpty) return 'ValidationException: $message';
-    final errorStr = errors.entries
-        .map((e) => '${e.key}: ${e.value.join(', ')}')
-        .join('; ');
+    final errorStr =
+        errors.entries.map((e) => '${e.key}: ${e.value.join(', ')}').join('; ');
     return 'ValidationException: $message ($errorStr)';
   }
 }

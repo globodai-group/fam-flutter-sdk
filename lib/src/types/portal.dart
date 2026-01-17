@@ -185,7 +185,8 @@ class CheckoutConfig {
         'productLabel': productLabel,
         'amount': amount,
         'isRecurring': isRecurring,
-        if (productDescription != null) 'productDescription': productDescription,
+        if (productDescription != null)
+          'productDescription': productDescription,
         if (currency != null) 'currency': currency,
         if (frequency != null) 'frequency': frequency,
         if (hasDiscount != null) 'hasDiscount': hasDiscount,

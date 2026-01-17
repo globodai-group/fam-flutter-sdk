@@ -256,7 +256,9 @@ class _FamPaymentSheetState extends State<FamPaymentSheet> {
   bool _saveCard = false;
 
   FamTheme get _theme =>
-      widget.configuration.theme ?? FamThemeProvider.maybeOf(context) ?? const FamTheme();
+      widget.configuration.theme ??
+      FamThemeProvider.maybeOf(context) ??
+      const FamTheme();
 
   @override
   Widget build(BuildContext context) {

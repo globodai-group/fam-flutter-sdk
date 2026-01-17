@@ -29,7 +29,8 @@ import 'package:fam_sdk/src/types/types.dart';
 /// ```
 class PayinsModule extends BaseModule {
   /// Creates a payins module.
-  const PayinsModule(HttpClient client) : super(client, '/api/v1/mangopay/payins');
+  const PayinsModule(HttpClient client)
+      : super(client, '/api/v1/mangopay/payins');
 
   // ─────────────────────────────────────────────────────────────────────────
   // Direct Card PayIn
@@ -66,8 +67,8 @@ class PayinsModule extends BaseModule {
       post(
         '/recurring/registrations',
         body: data.toJson(),
-        fromJson: (json) =>
-            RecurringPaymentRegistration.fromJson(json! as Map<String, Object?>),
+        fromJson: (json) => RecurringPaymentRegistration.fromJson(
+            json! as Map<String, Object?>),
       );
 
   /// Gets a recurring payment registration.
@@ -76,8 +77,8 @@ class PayinsModule extends BaseModule {
   ) =>
       get(
         '/recurring/registrations/$registrationId',
-        fromJson: (json) =>
-            RecurringPaymentRegistration.fromJson(json! as Map<String, Object?>),
+        fromJson: (json) => RecurringPaymentRegistration.fromJson(
+            json! as Map<String, Object?>),
       );
 
   /// Updates a recurring payment registration.
@@ -88,8 +89,8 @@ class PayinsModule extends BaseModule {
       put(
         '/recurring/registrations/$registrationId',
         body: data.toJson(),
-        fromJson: (json) =>
-            RecurringPaymentRegistration.fromJson(json! as Map<String, Object?>),
+        fromJson: (json) => RecurringPaymentRegistration.fromJson(
+            json! as Map<String, Object?>),
       );
 
   /// Ends a recurring payment registration.
@@ -99,8 +100,8 @@ class PayinsModule extends BaseModule {
       put(
         '/recurring/registrations/$registrationId',
         body: {'Status': 'ENDED'},
-        fromJson: (json) =>
-            RecurringPaymentRegistration.fromJson(json! as Map<String, Object?>),
+        fromJson: (json) => RecurringPaymentRegistration.fromJson(
+            json! as Map<String, Object?>),
       );
 
   // ─────────────────────────────────────────────────────────────────────────

@@ -65,7 +65,8 @@ Future<T> retry<T>(
 
       // Exponential backoff with jitter
       delay = Duration(
-        milliseconds: (delay.inMilliseconds * 2).clamp(0, maxDelay.inMilliseconds),
+        milliseconds:
+            (delay.inMilliseconds * 2).clamp(0, maxDelay.inMilliseconds),
       );
     }
   }

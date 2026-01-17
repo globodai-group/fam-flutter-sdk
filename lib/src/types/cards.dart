@@ -387,8 +387,7 @@ class Preauthorization {
             Money.fromJson(json['DebitedFunds'] as Map<String, Object?>),
         remainingFunds:
             Money.fromJson(json['RemainingFunds'] as Map<String, Object?>),
-        status:
-            PreauthorizationStatus.values.byName(json['Status'] as String),
+        status: PreauthorizationStatus.values.byName(json['Status'] as String),
         executionStatus: json['PaymentStatus'] != null
             ? PreauthorizationExecutionStatus.values
                 .byName(json['PaymentStatus'] as String)

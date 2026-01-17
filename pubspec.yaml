@@ -1,0 +1,42 @@
+name: fam_sdk
+description: >
+  Official Flutter/Dart SDK for FAM API - Type-safe payment and subscription
+  integrations with zero third-party dependencies. Production-ready with
+  automatic retries, comprehensive error handling, and webhook support.
+version: 1.0.0
+homepage: https://github.com/globodai-group/fam-flutter-sdk
+repository: https://github.com/globodai-group/fam-flutter-sdk
+issue_tracker: https://github.com/globodai-group/fam-flutter-sdk/issues
+documentation: https://github.com/globodai-group/fam-flutter-sdk#readme
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.16.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  crypto: ^3.0.3
+
+dev_dependencies:
+  test: ^1.24.0
+  lints: ^3.0.0
+  mocktail: ^1.0.0
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
+topics:
+  - payment
+  - sdk
+  - api
+  - subscription
+  - mangopay
+
+funding:
+  - https://github.com/sponsors/globodai-group

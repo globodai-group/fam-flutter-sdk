@@ -1,26 +1,73 @@
-# FAM SDK for Flutter
+<p align="center">
+  <img src="https://img.shields.io/badge/FAM-Flutter_SDK-0066FF?style=for-the-badge&logoColor=white" alt="FAM Flutter SDK" height="40">
+</p>
 
-A native Flutter SDK for FAM API integrations including payments, subscriptions, and user management. Built with zero third-party dependencies (except `crypto` for webhook signature verification).
+<h1 align="center">FAM Flutter SDK</h1>
 
-## Features
+<p align="center">
+  <strong>Official Flutter/Dart SDK for the FAM API</strong><br>
+  <em>A type-safe, developer-friendly wrapper for Mangopay payment services</em>
+</p>
 
-- **Users**: Create and manage natural (individual) and legal (company) users
-- **Wallets**: Manage e-wallets and view transactions
-- **Pay-ins**: Process card payments and recurring payments
-- **Pay-outs**: Withdraw funds to bank accounts
-- **Transfers**: Transfer funds between wallets
-- **Cards**: Card tokenization and management
-- **Bank Accounts**: IBAN, GB, US, CA, and other bank account types
-- **KYC**: Document submission and verification
-- **UBO**: Ultimate beneficial owner declarations
-- **Subscriptions**: Recurring subscription management
-- **Portal**: Customer portal sessions
-- **Webhooks**: Secure webhook handling with HMAC-SHA256 signature verification
-- **UI Components**: Pre-built payment widgets (PaymentSheet, CardForm, CardField)
+<p align="center">
+  <a href="https://github.com/globodai-group/fam-flutter-sdk/actions/workflows/ci.yml"><img src="https://github.com/globodai-group/fam-flutter-sdk/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://pub.dev/packages/fam_sdk"><img src="https://img.shields.io/pub/v/fam_sdk.svg?color=0066FF&label=pub.dev" alt="pub.dev version"></a>
+  <a href="https://pub.dev/packages/fam_sdk"><img src="https://img.shields.io/pub/dm/fam_sdk.svg?color=green&label=downloads" alt="pub.dev downloads"></a>
+  <a href="https://pub.dev/packages/fam_sdk"><img src="https://img.shields.io/badge/platform-android%20%7C%20ios%20%7C%20web%20%7C%20desktop-orange" alt="platforms"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+</p>
+
+<p align="center">
+  <a href="#installation">Installation</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#api-reference">API Reference</a> •
+  <a href="#ui-components">UI Components</a> •
+  <a href="#webhooks">Webhooks</a> •
+  <a href="#error-handling">Error Handling</a> •
+  <a href="#contributing">Contributing</a>
+</p>
+
+---
+
+## Highlights
+
+- **Full Dart Type Safety** — Strict types for all API requests and responses
+- **Zero Dependencies** — Only `crypto` for HMAC, no other external dependencies
+- **Multi-Platform** — Works on Android, iOS, Web, macOS, Windows, and Linux
+- **Automatic Retries** — Built-in retry logic with exponential backoff
+- **Comprehensive Errors** — Typed exception classes for precise error handling
+- **Webhook Verification** — Secure signature verification out of the box
+- **Pre-built UI** — Ready-to-use payment widgets (PaymentSheet, CardForm)
+
+## Requirements
+
+- Dart SDK 3.0.0 or higher
+- Flutter 3.16.0 or higher
 
 ## Installation
 
-Add to your `pubspec.yaml`:
+```bash
+flutter pub add fam_sdk
+```
+
+<details>
+<summary>Using pubspec.yaml directly</summary>
+
+```yaml
+dependencies:
+  fam_sdk: ^1.0.0
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
+
+</details>
+
+<details>
+<summary>Installing from Git</summary>
 
 ```yaml
 dependencies:
@@ -30,371 +77,707 @@ dependencies:
       ref: main
 ```
 
-Then run:
-
-```bash
-flutter pub get
-```
+</details>
 
 ## Quick Start
-
-### Initialize the SDK
 
 ```dart
 import 'package:fam_sdk/fam_sdk.dart';
 
+// Initialize the client
 final fam = Fam(
-  FamOptions(
-    baseUrl: 'https://api.fam.example.com',
-    token: 'your-api-token',
+  apiKey: 'your-auth-token',
+  options: FamOptions(
+    baseUrl: 'https://api.fam.com',
   ),
 );
-```
 
-### Create a User
-
-```dart
-// Create a natural (individual) user
+// Create a user
 final user = await fam.users.createNatural(
   CreateNaturalUserRequest(
+    email: 'john.doe@example.com',
     firstName: 'John',
     lastName: 'Doe',
-    email: 'john@example.com',
-    birthday: 631152000, // Unix timestamp
+    birthday: DateTime(1990, 1, 15),
     nationality: 'FR',
     countryOfResidence: 'FR',
   ),
 );
 
-print('User created: ${user.id}');
-```
-
-### Create a Wallet
-
-```dart
+// Create a wallet
 final wallet = await fam.wallets.create(
   CreateWalletRequest(
     owners: [user.id],
-    description: 'Main Wallet',
+    description: 'Main wallet',
     currency: Currency.EUR,
   ),
 );
 
-print('Wallet balance: ${wallet.balance.format()}');
+print('Wallet created: ${wallet.id}');
 ```
 
-### Process a Card Payment
+## Configuration
 
 ```dart
-// 1. Create a card registration
-final registration = await fam.cardRegistrations.create(
-  CreateCardRegistrationRequest(
-    userId: user.id,
-    currency: Currency.EUR,
+import 'package:fam_sdk/fam_sdk.dart';
+
+final fam = Fam(
+  apiKey: 'your-auth-token',
+  options: FamOptions(
+    baseUrl: 'https://api.fam.com',
+    timeout: Duration(seconds: 30),  // Request timeout (default: 30s)
+    maxRetries: 3,                    // Retry attempts (default: 3)
   ),
 );
-
-// 2. Tokenize card data (via your secure form)
-// The card data should be sent directly to the CardRegistrationURL
-
-// 3. Update registration with tokenized data
-final updatedRegistration = await fam.cardRegistrations.update(
-  registration.id,
-  UpdateCardRegistrationRequest(
-    registrationData: 'tokenized_data_from_form',
-  ),
-);
-
-// 4. Create a pay-in
-final payin = await fam.payins.createCardDirect(
-  CreateCardDirectPayinRequest(
-    authorId: user.id,
-    creditedWalletId: wallet.id,
-    debitedFunds: Money(amount: 1000, currency: Currency.EUR),
-    fees: Money(amount: 0, currency: Currency.EUR),
-    cardId: updatedRegistration.cardId!,
-    secureModeReturnURL: 'https://your-app.com/payment-return',
-  ),
-);
-
-if (payin.status == TransactionStatus.SUCCEEDED) {
-  print('Payment successful!');
-}
-```
-
-### Clean Up
-
-```dart
-fam.close();
-```
-
-## UI Components
-
-The SDK includes pre-built UI components for payment flows.
-
-### Setup Theme
-
-```dart
-import 'package:fam_sdk/ui.dart';
-
-MaterialApp(
-  home: FamThemeProvider(
-    theme: FamTheme(
-      primaryColor: Colors.indigo,
-      errorColor: Colors.red,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: MyApp(),
-  ),
-);
-```
-
-### PaymentSheet
-
-Display a complete payment flow:
-
-```dart
-await FamPaymentSheet.show(
-  context: context,
-  config: PaymentSheetConfig(
-    walletId: wallet.id,
-    amount: 1000, // in cents
-    currency: Currency.EUR,
-    title: 'Complete Purchase',
-    description: 'Premium Subscription',
-  ),
-  onComplete: (result) {
-    if (result.status == PaymentStatus.succeeded) {
-      print('Payment successful: ${result.payinId}');
-    } else if (result.status == PaymentStatus.failed) {
-      print('Payment failed: ${result.error}');
-    }
-  },
-);
-```
-
-### CardForm
-
-Use individual card form components:
-
-```dart
-CardForm(
-  onCardChanged: (details) {
-    if (details.complete) {
-      print('Card valid: ${details.brand}');
-    }
-  },
-);
-```
-
-### CardField
-
-Single-line card input:
-
-```dart
-CardField(
-  onCardChanged: (details) {
-    print('Card number valid: ${details.complete}');
-  },
-);
-```
-
-## Error Handling
-
-All SDK errors extend `FamException`:
-
-```dart
-try {
-  await fam.users.getUser('user_123');
-} on AuthenticationException catch (e) {
-  // 401 - Invalid or expired token
-  print('Authentication failed: ${e.message}');
-} on AuthorizationException catch (e) {
-  // 403 - Access denied
-  print('Authorization failed: ${e.message}');
-} on NotFoundException catch (e) {
-  // 404 - Resource not found
-  print('Not found: ${e.message}');
-} on ValidationException catch (e) {
-  // 400/422 - Validation errors
-  print('Validation failed: ${e.message}');
-  for (final entry in e.errors.entries) {
-    print('  ${entry.key}: ${entry.value.join(', ')}');
-  }
-} on RateLimitException catch (e) {
-  // 429 - Rate limited
-  print('Rate limited. Retry after ${e.retryAfter} seconds');
-} on NetworkException catch (e) {
-  // Connection issues
-  print('Network error: ${e.message}');
-} on TimeoutException catch (e) {
-  // Request timeout
-  print('Timeout: ${e.message}');
-} on FamException catch (e) {
-  // Any other SDK error
-  print('Error: ${e.message}');
-}
-```
-
-## Webhooks
-
-Handle incoming webhooks with signature verification:
-
-```dart
-final webhooks = Webhooks(
-  config: WebhookHandlerConfig(
-    secret: 'whsec_your_webhook_secret',
-    tolerance: Duration(minutes: 5), // Reject old events
-  ),
-);
-
-// In your webhook handler
-void handleWebhook(String rawBody, String signature) {
-  try {
-    final event = webhooks.constructEvent(rawBody, signature);
-
-    if (event is MangopayWebhookEvent) {
-      switch (event.type) {
-        case MangopayEventType.PAYIN_NORMAL_SUCCEEDED:
-          handlePayinSuccess(event.resourceId);
-          break;
-        case MangopayEventType.PAYIN_NORMAL_FAILED:
-          handlePayinFailure(event.resourceId);
-          break;
-        case MangopayEventType.KYC_SUCCEEDED:
-          handleKycSuccess(event.resourceId);
-          break;
-        // ... handle other events
-      }
-    } else if (event is FamWebhookEvent) {
-      switch (event.type) {
-        case FamEventType.FAM_SUBSCRIPTION_PAYMENT_SUCCEEDED:
-          handleSubscriptionPayment(event.resourceId);
-          break;
-        case FamEventType.FAM_SUBSCRIPTION_CANCELLED:
-          handleSubscriptionCancelled(event.resourceId);
-          break;
-        // ... handle other events
-      }
-    }
-  } on WebhookSignatureException catch (e) {
-    // Invalid signature - reject the webhook
-    print('Invalid webhook: ${e.message}');
-  }
-}
 ```
 
 ## API Reference
 
-### Modules
+### Users
 
-| Module | Description |
-|--------|-------------|
-| `fam.users` | User management (natural and legal) |
-| `fam.wallets` | Wallet operations and transactions |
-| `fam.payins` | Card payments and recurring payments |
-| `fam.payouts` | Bank wire withdrawals |
-| `fam.transfers` | Wallet-to-wallet transfers |
-| `fam.cardRegistrations` | Card tokenization |
-| `fam.cards` | Card management |
-| `fam.preauthorizations` | Hold funds on cards |
-| `fam.subscriptions` | Recurring subscriptions |
-| `fam.portal` | Customer portal sessions |
+<details open>
+<summary><strong>Natural Users</strong></summary>
+
+```dart
+// Create a natural user
+final user = await fam.users.createNatural(
+  CreateNaturalUserRequest(
+    email: 'user@example.com',
+    firstName: 'John',
+    lastName: 'Doe',
+    birthday: DateTime(1990, 1, 15),
+    nationality: 'FR',
+    countryOfResidence: 'FR',
+  ),
+);
+
+// Update a natural user
+await fam.users.updateNatural(userId, UpdateNaturalUserRequest(
+  firstName: 'Jane',
+));
+
+// Get user details
+final user = await fam.users.getUser(userId);
+final naturalUser = await fam.users.getNaturalUser(userId);
+```
+
+</details>
+
+<details>
+<summary><strong>Legal Users</strong></summary>
+
+```dart
+// Create a legal user
+final company = await fam.users.createLegal(
+  CreateLegalUserRequest(
+    email: 'contact@company.com',
+    name: 'ACME Corp',
+    legalPersonType: LegalPersonType.BUSINESS,
+    legalRepresentativeFirstName: 'John',
+    legalRepresentativeLastName: 'Doe',
+    legalRepresentativeBirthday: DateTime(1980, 5, 20),
+    legalRepresentativeNationality: 'FR',
+    legalRepresentativeCountryOfResidence: 'FR',
+  ),
+);
+
+// Update and retrieve
+await fam.users.updateLegal(userId, UpdateLegalUserRequest(name: 'ACME Corporation'));
+final legalUser = await fam.users.getLegalUser(userId);
+```
+
+</details>
+
+<details>
+<summary><strong>User Resources</strong></summary>
+
+```dart
+// Get user's wallets, cards, bank accounts, and transactions
+final wallets = await fam.users.getWallets(userId);
+final cards = await fam.users.getCards(userId);
+final bankAccounts = await fam.users.getBankAccounts(userId);
+final transactions = await fam.users.getTransactions(userId);
+```
+
+</details>
+
+### Wallets
+
+```dart
+// Create a wallet
+final wallet = await fam.wallets.create(
+  CreateWalletRequest(
+    owners: [userId],
+    description: 'EUR Wallet',
+    currency: Currency.EUR,
+  ),
+);
+
+// Get wallet details and transactions
+final wallet = await fam.wallets.getWallet(walletId);
+final transactions = await fam.wallets.getTransactions(walletId);
+```
+
+### Payments
+
+<details open>
+<summary><strong>Pay-ins</strong></summary>
+
+```dart
+// Create a card direct payin
+final payin = await fam.payins.create(
+  CreateCardDirectPayinRequest(
+    authorId: userId,
+    creditedWalletId: walletId,
+    debitedFunds: Money(amount: 1000, currency: Currency.EUR),
+    fees: Money(amount: 0, currency: Currency.EUR),
+    cardId: cardId,
+    secureModeReturnUrl: 'https://example.com/return',
+  ),
+);
+
+// Get payin details
+final payin = await fam.payins.getPayin(payinId);
+
+// Refund a payin
+final refund = await fam.payins.refund(payinId, CreateRefundRequest(
+  authorId: userId,
+));
+```
+
+</details>
+
+<details>
+<summary><strong>Recurring Payments</strong></summary>
+
+```dart
+// Create recurring payment registration
+final recurring = await fam.payins.createRecurringPayment(
+  CreateRecurringPaymentRequest(
+    authorId: userId,
+    cardId: cardId,
+    creditedWalletId: walletId,
+    firstTransactionDebitedFunds: Money(amount: 1000, currency: Currency.EUR),
+    firstTransactionFees: Money(amount: 0, currency: Currency.EUR),
+  ),
+);
+
+// Create Customer-Initiated Transaction (CIT)
+final cit = await fam.payins.createRecurringCit(
+  CreateRecurringCitPayinRequest(
+    recurringPayinRegistrationId: recurring.id,
+    debitedFunds: Money(amount: 1000, currency: Currency.EUR),
+    fees: Money(amount: 0, currency: Currency.EUR),
+    secureModeReturnUrl: 'https://example.com/return',
+  ),
+);
+
+// Create Merchant-Initiated Transaction (MIT)
+final mit = await fam.payins.createRecurringMit(
+  CreateRecurringMitPayinRequest(
+    recurringPayinRegistrationId: recurring.id,
+    debitedFunds: Money(amount: 1000, currency: Currency.EUR),
+    fees: Money(amount: 0, currency: Currency.EUR),
+  ),
+);
+```
+
+</details>
+
+<details>
+<summary><strong>Pay-outs</strong></summary>
+
+```dart
+// Create a payout to bank account
+final payout = await fam.payouts.create(
+  CreatePayoutRequest(
+    authorId: userId,
+    debitedWalletId: walletId,
+    debitedFunds: Money(amount: 1000, currency: Currency.EUR),
+    fees: Money(amount: 0, currency: Currency.EUR),
+    bankAccountId: bankAccountId,
+  ),
+);
+
+// Get payout details
+final payout = await fam.payouts.getPayout(payoutId);
+```
+
+</details>
+
+<details>
+<summary><strong>Transfers</strong></summary>
+
+```dart
+// Create a wallet-to-wallet transfer
+final transfer = await fam.transfers.create(
+  CreateTransferRequest(
+    authorId: userId,
+    debitedWalletId: sourceWalletId,
+    creditedWalletId: targetWalletId,
+    debitedFunds: Money(amount: 1000, currency: Currency.EUR),
+    fees: Money(amount: 0, currency: Currency.EUR),
+  ),
+);
+
+// Get transfer details
+final transfer = await fam.transfers.getTransfer(transferId);
+
+// Refund a transfer
+final refund = await fam.transfers.refund(transferId, CreateRefundRequest(
+  authorId: userId,
+));
+```
+
+</details>
+
+### Cards
+
+<details open>
+<summary><strong>Card Registration</strong></summary>
+
+```dart
+// Create card registration
+final registration = await fam.cardRegistrations.create(
+  CreateCardRegistrationRequest(
+    userId: userId,
+    currency: Currency.EUR,
+    cardType: CardType.CB_VISA_MASTERCARD,
+  ),
+);
+
+// Update with tokenized card data
+final updated = await fam.cardRegistrations.update(
+  registration.id,
+  UpdateCardRegistrationRequest(registrationData: tokenizedData),
+);
+
+// Get card from registration
+final card = await fam.cards.getCard(updated.cardId!);
+```
+
+</details>
+
+<details>
+<summary><strong>Card Operations</strong></summary>
+
+```dart
+// Get card details
+final card = await fam.cards.getCard(cardId);
+
+// Deactivate a card
+await fam.cards.deactivate(cardId);
+
+// Validate a card
+final validation = await fam.cardValidations.create(
+  CreateCardValidationRequest(
+    authorId: userId,
+    cardId: cardId,
+    secureModeReturnUrl: 'https://example.com/return',
+    ipAddress: '192.168.1.1',
+    browserInfo: browserInfo,
+  ),
+);
+```
+
+</details>
 
 ### User-Scoped Modules
 
-These modules require a user ID:
+<details open>
+<summary><strong>Bank Accounts</strong></summary>
 
 ```dart
-// Bank accounts for a specific user
-final bankAccounts = fam.bankAccounts('user_123');
-await bankAccounts.createIban(...);
+final bankAccounts = fam.bankAccounts(userId);
 
-// KYC documents for a specific user
-final kyc = fam.kyc('user_123');
-await kyc.create(...);
+// Create IBAN bank account
+final iban = await bankAccounts.createIban(
+  CreateIbanBankAccountRequest(
+    ownerName: 'John Doe',
+    ownerAddress: Address(
+      addressLine1: '1 rue de la Paix',
+      city: 'Paris',
+      postalCode: '75001',
+      country: 'FR',
+    ),
+    iban: 'FR7630004000031234567890143',
+  ),
+);
 
-// UBO declarations for a legal user
-final ubo = fam.ubo('legal_user_123');
-await ubo.createDeclaration();
-
-// SCA recipients for a user
-final recipients = fam.scaRecipients('user_123');
-await recipients.create(...);
+// List and manage
+final accounts = await bankAccounts.list();
+final account = await bankAccounts.getAccount(accountId);
+await bankAccounts.deactivate(accountId);
 ```
 
-### Token Management
+</details>
+
+<details>
+<summary><strong>KYC Documents</strong></summary>
 
 ```dart
-// Update the authentication token
-fam.setToken('new-token');
+final kyc = fam.kyc(userId);
 
-// Clear the token (for logout)
-fam.clearToken();
+// Create and submit KYC document
+final document = await kyc.create(
+  CreateKycDocumentRequest(type: KycDocumentType.IDENTITY_PROOF),
+);
+await kyc.createPage(document.id, fileBase64);
+await kyc.submit(document.id);
+
+// Check status
+final status = await kyc.getDocument(document.id);
 ```
 
-### Request Options
+</details>
 
-Customize individual requests:
+<details>
+<summary><strong>UBO Declarations</strong></summary>
 
 ```dart
-final user = await fam.users.getUser(
-  'user_123',
-  options: RequestOptions(
-    timeout: Duration(seconds: 30),
-    headers: {'X-Custom-Header': 'value'},
+final ubo = fam.ubo(userId);
+
+// Create UBO declaration
+final declaration = await ubo.createDeclaration();
+
+// Add Ultimate Beneficial Owner
+final owner = await ubo.createUbo(
+  declaration.id,
+  CreateUboRequest(
+    firstName: 'John',
+    lastName: 'Doe',
+    birthday: DateTime(1980, 1, 15),
+    nationality: 'FR',
+    address: Address(
+      addressLine1: '1 rue de la Paix',
+      city: 'Paris',
+      postalCode: '75001',
+      country: 'FR',
+    ),
+    birthplace: Birthplace(city: 'Paris', country: 'FR'),
+  ),
+);
+
+// Submit declaration
+await ubo.submit(declaration.id);
+```
+
+</details>
+
+<details>
+<summary><strong>SCA Recipients</strong></summary>
+
+```dart
+final recipients = fam.scaRecipients(userId);
+
+// Get schema for recipient type
+final schema = await recipients.getSchema(
+  payoutMethodType: 'IBAN',
+  recipientType: 'Individual',
+  currency: 'EUR',
+  country: 'FR',
+);
+
+// Create recipient
+final recipient = await recipients.create(
+  CreateRecipientRequest(
+    displayName: 'John Doe - Main Account',
+    payoutMethodType: PayoutMethodType.IBAN,
+    recipientType: RecipientType.Individual,
+    currency: Currency.EUR,
+    // ... schema-specific fields
   ),
 );
 ```
 
-## Configuration Options
+</details>
+
+### Subscriptions
 
 ```dart
-final fam = Fam(
-  FamOptions(
-    baseUrl: 'https://api.fam.example.com',
-    token: 'your-api-token',
-    timeout: Duration(seconds: 30),      // Default request timeout
-    maxRetries: 3,                        // Retry count for failed requests
-    retryDelay: Duration(seconds: 1),    // Initial retry delay
-    headers: {'X-Client-Version': '1.0'}, // Custom headers
+// Register a subscription
+final subscription = await fam.subscriptions.register(
+  CreateSubscriptionRequest(
+    userId: userId,
+    walletId: walletId,
+    cardId: cardId,
+    amount: Money(amount: 999, currency: Currency.EUR),
+    frequency: SubscriptionFrequency.MONTHLY,
   ),
 );
+
+// Manage subscriptions
+final subscriptions = await fam.subscriptions.list(userId: userId);
+final subscription = await fam.subscriptions.getSubscription(subscriptionId);
+
+// Lifecycle operations
+await fam.subscriptions.enable(subscriptionId);
+await fam.subscriptions.disable(subscriptionId);
+await fam.subscriptions.cancel(subscriptionId);
 ```
 
-## Supported Currencies
+### Portal
 
-The SDK supports the following currencies:
+```dart
+// Create a portal session for user self-service
+final session = await fam.portal.createSession(
+  CreatePortalSessionRequest(
+    userId: userId,
+    returnUrl: 'https://example.com/account',
+    features: [PortalFeature.MANAGE_CARDS, PortalFeature.VIEW_TRANSACTIONS],
+  ),
+);
 
-- EUR (Euro)
-- USD (US Dollar)
-- GBP (British Pound)
-- CHF (Swiss Franc)
-- CAD (Canadian Dollar)
-- AUD (Australian Dollar)
-- JPY (Japanese Yen)
-- PLN (Polish Zloty)
-- SEK (Swedish Krona)
-- NOK (Norwegian Krone)
-- DKK (Danish Krone)
+// Redirect user to session.url
+```
 
-## Requirements
+## UI Components
 
-- Flutter SDK 3.16.0 or higher
-- Dart SDK 3.0.0 or higher
+The SDK includes pre-built Flutter widgets for payment collection:
 
-## Dependencies
+```dart
+import 'package:fam_sdk/ui.dart';
+```
 
-- `crypto: ^3.0.3` - For webhook HMAC-SHA256 signature verification
+<details open>
+<summary><strong>PaymentSheet</strong></summary>
 
-## License
+A ready-to-use modal for collecting card payments:
 
-MIT License - see [LICENSE](LICENSE) for details.
+```dart
+final result = await PaymentSheet.show(
+  context: context,
+  amount: Money(amount: 2500, currency: Currency.EUR),
+  onTokenized: (cardData) async {
+    // Process payment with cardData
+    return true; // Return true on success
+  },
+  theme: FamTheme(
+    primaryColor: Colors.blue,
+    borderRadius: 12,
+  ),
+);
+
+if (result.success) {
+  print('Payment completed!');
+}
+```
+
+</details>
+
+<details>
+<summary><strong>CardForm</strong></summary>
+
+A complete card input form:
+
+```dart
+CardForm(
+  onCardChanged: (cardData) {
+    setState(() => _isValid = cardData.isComplete);
+  },
+  onSubmit: (cardData) async {
+    // Handle card submission
+  },
+  showPostalCode: true,
+  theme: FamTheme.light(),
+)
+```
+
+</details>
+
+<details>
+<summary><strong>CardField</strong></summary>
+
+Individual card input fields for custom layouts:
+
+```dart
+Column(
+  children: [
+    CardField(
+      type: CardFieldType.number,
+      onChanged: (value) => _cardNumber = value,
+      decoration: InputDecoration(labelText: 'Card Number'),
+    ),
+    Row(
+      children: [
+        Expanded(
+          child: CardField(
+            type: CardFieldType.expiry,
+            onChanged: (value) => _expiry = value,
+          ),
+        ),
+        Expanded(
+          child: CardField(
+            type: CardFieldType.cvc,
+            onChanged: (value) => _cvc = value,
+          ),
+        ),
+      ],
+    ),
+  ],
+)
+```
+
+</details>
+
+## Webhooks
+
+Verify and process webhook events securely:
+
+```dart
+import 'package:fam_sdk/fam_sdk.dart';
+
+final webhooks = Webhooks(
+  config: WebhookHandlerConfig(
+    secret: 'whsec_your_webhook_secret',
+  ),
+);
+
+// In your server handler
+void handleWebhook(String payload, String signature) {
+  try {
+    final event = webhooks.constructEvent(payload, signature);
+
+    if (event is MangopayWebhookEvent) {
+      switch (event.type) {
+        case MangopayEventType.PAYIN_NORMAL_SUCCEEDED:
+          handleSuccessfulPayin(event);
+          break;
+        case MangopayEventType.PAYIN_NORMAL_FAILED:
+          handleFailedPayin(event);
+          break;
+        case MangopayEventType.KYC_SUCCEEDED:
+          handleKycValidation(event);
+          break;
+        default:
+          print('Unhandled event: ${event.type}');
+      }
+    } else if (event is FamWebhookEvent) {
+      switch (event.type) {
+        case FamEventType.FAM_SUBSCRIPTION_PAYMENT_SUCCEEDED:
+          handleSubscriptionPayment(event);
+          break;
+        default:
+          print('Unhandled FAM event: ${event.type}');
+      }
+    }
+  } on WebhookSignatureException catch (e) {
+    print('Invalid webhook signature: $e');
+    // Return 400 Bad Request
+  }
+}
+```
+
+## Error Handling
+
+The SDK provides typed exception classes for precise error handling:
+
+```dart
+import 'package:fam_sdk/fam_sdk.dart';
+
+try {
+  final user = await fam.users.getUser('invalid-id');
+} on NotFoundException catch (e) {
+  // Resource not found (404)
+  print('User not found');
+} on AuthenticationException catch (e) {
+  // Invalid or expired token (401)
+  print('Please re-authenticate');
+} on ValidationException catch (e) {
+  // Invalid request data (400/422)
+  print('Validation errors:');
+  for (final error in e.fieldErrors) {
+    print('  ${error.field}: ${error.message}');
+  }
+} on RateLimitException catch (e) {
+  // Too many requests (429)
+  print('Rate limited. Retry after ${e.retryAfter?.inSeconds}s');
+} on NetworkException catch (e) {
+  // Connection/timeout errors
+  print('Network error: ${e.message}');
+} on ApiException catch (e) {
+  // Other API errors
+  print('API error ${e.statusCode}: ${e.message}');
+}
+```
+
+## Dart Types
+
+Full type definitions are included for all API operations:
+
+```dart
+import 'package:fam_sdk/fam_sdk.dart';
+
+// Users
+NaturalUser user;
+LegalUser company;
+CreateNaturalUserRequest request;
+CreateLegalUserRequest legalRequest;
+
+// Payments
+Wallet wallet;
+Payin payin;
+Payout payout;
+Transfer transfer;
+
+// Cards
+Card card;
+CardRegistration registration;
+
+// KYC
+KycDocument document;
+UboDeclaration declaration;
+
+// Subscriptions
+Subscription subscription;
+
+// Common
+Money amount;
+Currency currency;
+Address address;
+```
+
+## Development
+
+```bash
+# Install dependencies
+flutter pub get
+
+# Run tests
+flutter test
+
+# Run tests with coverage
+flutter test --coverage
+
+# Analyze code
+flutter analyze
+
+# Format code
+dart format .
+```
 
 ## Contributing
 
-Contributions are welcome! Please read our contributing guidelines before submitting a pull request.
+We welcome contributions! Please see our contributing guidelines:
 
-## Support
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Write tests for your changes
+4. Ensure all tests pass (`flutter test`)
+5. Commit using [Conventional Commits](https://conventionalcommits.org) (`git commit -m 'feat: add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-For issues and feature requests, please use the [GitHub Issues](https://github.com/globodai-group/fam-flutter-sdk/issues) page.
+## Security
+
+If you discover a security vulnerability, please send an email to security@globodai.com instead of using the issue tracker.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">
+  Made with care by the <a href="https://globodai.com">Globodai</a> team
+</p>

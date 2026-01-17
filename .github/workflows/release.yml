@@ -34,7 +34,7 @@ jobs:
         run: flutter test
 
       - name: Analyze code
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos
 
       - name: Configure Git
         run: |

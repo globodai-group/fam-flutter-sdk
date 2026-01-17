@@ -113,8 +113,7 @@ class RecurringSubscription {
         lastPaymentDate: json['lastPaymentDate'] as String?,
         endDate: json['endDate'] as String?,
         processingEnabled: json['processingEnabled'] as bool?,
-        webhookNotificationEnabled:
-            json['webhookNotificationEnabled'] as bool?,
+        webhookNotificationEnabled: json['webhookNotificationEnabled'] as bool?,
         metadata: json['metadata'] as Map<String, Object?>?,
       );
 

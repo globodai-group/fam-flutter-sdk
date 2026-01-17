@@ -194,7 +194,8 @@ class UboDeclaration {
             .toList(growable: false),
         processedDate: json['ProcessedDate'] as int?,
         reason: json['Reason'] != null
-            ? UboDeclarationRefusedReason.values.byName(json['Reason'] as String)
+            ? UboDeclarationRefusedReason.values
+                .byName(json['Reason'] as String)
             : null,
         message: json['Message'] as String?,
         creationDate: json['CreationDate'] as int?,

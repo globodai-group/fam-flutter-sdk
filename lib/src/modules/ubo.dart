@@ -38,7 +38,8 @@ import 'package:fam_sdk/src/types/types.dart';
 class UboModule extends UserScopedModule {
   /// Creates a UBO module for a specific user.
   UboModule(HttpClient client, String userId)
-      : super(client, '/api/v1/mangopay/users/$userId/kyc/ubodeclarations', userId);
+      : super(client, '/api/v1/mangopay/users/$userId/kyc/ubodeclarations',
+            userId);
 
   /// Creates a new UBO declaration.
   Future<UboDeclaration> createDeclaration() => post(

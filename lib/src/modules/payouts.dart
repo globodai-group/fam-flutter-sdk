@@ -24,7 +24,8 @@ import 'package:fam_sdk/src/types/types.dart';
 /// ```
 class PayoutsModule extends BaseModule {
   /// Creates a payouts module.
-  const PayoutsModule(HttpClient client) : super(client, '/api/v1/mangopay/payouts');
+  const PayoutsModule(HttpClient client)
+      : super(client, '/api/v1/mangopay/payouts');
 
   /// Creates a new payout.
   Future<Payout> create(CreatePayoutRequest data) => post(

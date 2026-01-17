@@ -205,8 +205,8 @@ class Recipient {
   factory Recipient.fromJson(Map<String, Object?> json) => Recipient(
         id: json['Id'] as String,
         displayName: json['DisplayName'] as String,
-        payoutMethodType: PayoutMethodType.values
-            .byName(json['PayoutMethodType'] as String),
+        payoutMethodType:
+            PayoutMethodType.values.byName(json['PayoutMethodType'] as String),
         recipientType:
             RecipientType.values.byName(json['RecipientType'] as String),
         currency: Currency.values.byName(json['Currency'] as String),
@@ -404,7 +404,8 @@ class RecipientSchema {
   });
 
   /// Creates from JSON.
-  factory RecipientSchema.fromJson(Map<String, Object?> json) => RecipientSchema(
+  factory RecipientSchema.fromJson(Map<String, Object?> json) =>
+      RecipientSchema(
         fields: (json['Fields'] as List<Object?>? ?? [])
             .cast<Map<String, Object?>>()
             .map(RecipientSchemaField.fromJson)

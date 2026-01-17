@@ -9,11 +9,11 @@ import 'package:fam_sdk/fam_sdk.dart';
 void main() async {
   // Initialize the SDK
   final fam = Fam(
-    apiKey: 'your_api_key_here',
-    options: FamOptions(
+    FamOptions(
       baseUrl: 'https://api.fam.example.com',
+      token: 'your_api_token_here',
       timeout: Duration(seconds: 30),
-      maxRetries: 3,
+      retries: 3,
     ),
   );
 
@@ -28,6 +28,9 @@ void main() async {
 
   // Example: Handle webhooks
   handleWebhooks();
+
+  // Clean up
+  fam.close();
 }
 
 /// Creates a natural (individual) user.
@@ -38,7 +41,7 @@ Future<void> createUser(Fam fam) async {
         email: 'john.doe@example.com',
         firstName: 'John',
         lastName: 'Doe',
-        birthday: DateTime(1990, 1, 15),
+        birthday: 631152000, // Unix timestamp for 1990-01-15
         nationality: 'FR',
         countryOfResidence: 'FR',
       ),
@@ -48,8 +51,8 @@ Future<void> createUser(Fam fam) async {
     print('Email: ${user.email}');
   } on ValidationException catch (e) {
     print('Validation error: ${e.message}');
-    for (final error in e.fieldErrors) {
-      print('  - ${error.field}: ${error.message}');
+    for (final entry in e.errors.entries) {
+      print('  - ${entry.key}: ${entry.value.join(', ')}');
     }
   } on ApiException catch (e) {
     print('API error: ${e.message} (${e.statusCode})');
@@ -68,7 +71,7 @@ Future<void> createWallet(Fam fam) async {
     );
 
     print('Wallet created: ${wallet.id}');
-    print('Balance: ${wallet.balance.formatted}');
+    print('Balance: ${wallet.balance}');
   } on FamException catch (e) {
     print('Error: $e');
   }

@@ -51,8 +51,8 @@ class PortalModule extends BaseModule {
       post(
         '/sessions/validate',
         body: data.toJson(),
-        fromJson: (json) =>
-            ValidatePortalSessionResponse.fromJson(json! as Map<String, Object?>),
+        fromJson: (json) => ValidatePortalSessionResponse.fromJson(
+            json! as Map<String, Object?>),
       );
 
   /// Gets the user for a portal session.
@@ -72,8 +72,8 @@ class PortalModule extends BaseModule {
         options: RequestOptions(
           headers: {'X-Portal-Session': sessionToken},
         ),
-        fromJson: (json) =>
-            RefreshPortalSessionResponse.fromJson(json! as Map<String, Object?>),
+        fromJson: (json) => RefreshPortalSessionResponse.fromJson(
+            json! as Map<String, Object?>),
       );
 
   /// Logs out from a portal session.

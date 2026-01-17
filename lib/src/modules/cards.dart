@@ -74,7 +74,8 @@ class CardRegistrationsModule extends BaseModule {
 /// ```
 class CardsModule extends BaseModule {
   /// Creates a cards module.
-  const CardsModule(HttpClient client) : super(client, '/api/v1/mangopay/cards');
+  const CardsModule(HttpClient client)
+      : super(client, '/api/v1/mangopay/cards');
 
   /// Gets a card by ID.
   Future<Card> getCard(String cardId) => get(

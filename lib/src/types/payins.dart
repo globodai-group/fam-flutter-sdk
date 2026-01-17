@@ -316,23 +316,22 @@ class RecurringPaymentRegistration {
         creditedWalletId: json['CreditedWalletId'] as String,
         status: json['Status'] as String,
         currentState: json['CurrentState'] as String?,
-        firstTransactionDebitedFunds:
-            json['FirstTransactionDebitedFunds'] != null
-                ? Money.fromJson(
-                    json['FirstTransactionDebitedFunds'] as Map<String, Object?>,
-                  )
-                : null,
+        firstTransactionDebitedFunds: json['FirstTransactionDebitedFunds'] !=
+                null
+            ? Money.fromJson(
+                json['FirstTransactionDebitedFunds'] as Map<String, Object?>,
+              )
+            : null,
         firstTransactionFees: json['FirstTransactionFees'] != null
             ? Money.fromJson(
                 json['FirstTransactionFees'] as Map<String, Object?>,
               )
             : null,
-        nextTransactionDebitedFunds:
-            json['NextTransactionDebitedFunds'] != null
-                ? Money.fromJson(
-                    json['NextTransactionDebitedFunds'] as Map<String, Object?>,
-                  )
-                : null,
+        nextTransactionDebitedFunds: json['NextTransactionDebitedFunds'] != null
+            ? Money.fromJson(
+                json['NextTransactionDebitedFunds'] as Map<String, Object?>,
+              )
+            : null,
         nextTransactionFees: json['NextTransactionFees'] != null
             ? Money.fromJson(
                 json['NextTransactionFees'] as Map<String, Object?>,
@@ -417,7 +416,8 @@ class RecurringPaymentRegistration {
         'Status': status,
         if (currentState != null) 'CurrentState': currentState,
         if (firstTransactionDebitedFunds != null)
-          'FirstTransactionDebitedFunds': firstTransactionDebitedFunds!.toJson(),
+          'FirstTransactionDebitedFunds':
+              firstTransactionDebitedFunds!.toJson(),
         if (firstTransactionFees != null)
           'FirstTransactionFees': firstTransactionFees!.toJson(),
         if (nextTransactionDebitedFunds != null)

@@ -23,7 +23,8 @@ import 'package:fam_sdk/src/types/types.dart';
 /// ```
 class TransfersModule extends BaseModule {
   /// Creates a transfers module.
-  const TransfersModule(HttpClient client) : super(client, '/api/v1/mangopay/transfers');
+  const TransfersModule(HttpClient client)
+      : super(client, '/api/v1/mangopay/transfers');
 
   /// Creates a new transfer.
   Future<Transfer> create(CreateTransferRequest data) => post(

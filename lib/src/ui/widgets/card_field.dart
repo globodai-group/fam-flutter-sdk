@@ -281,7 +281,9 @@ class _FamCardFieldState extends State<FamCardField> {
 
     return CardFieldInputDetails(
       complete: complete,
-      number: number.length >= 4 ? '•••• ${number.substring(number.length - 4)}' : null,
+      number: number.length >= 4
+          ? '•••• ${number.substring(number.length - 4)}'
+          : null,
       expiryMonth: expiryMonth,
       expiryYear: expiryYear,
       cvc: cvc.isNotEmpty ? '•' * cvc.length : null,
@@ -460,7 +462,8 @@ class _FamCardFieldState extends State<FamCardField> {
               obscureText: true,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(_brand == CardBrand.amex ? 4 : 3),
+                LengthLimitingTextInputFormatter(
+                    _brand == CardBrand.amex ? 4 : 3),
               ],
               decoration: InputDecoration(
                 hintText: placeholder.cvc,

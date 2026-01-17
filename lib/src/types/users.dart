@@ -335,12 +335,11 @@ class LegalUser extends User {
             json['LegalRepresentativeNationality'] as String?,
         legalRepresentativeCountryOfResidence:
             json['LegalRepresentativeCountryOfResidence'] as String?,
-        legalRepresentativeAddress:
-            json['LegalRepresentativeAddress'] != null
-                ? Address.fromJson(
-                    json['LegalRepresentativeAddress'] as Map<String, Object?>,
-                  )
-                : null,
+        legalRepresentativeAddress: json['LegalRepresentativeAddress'] != null
+            ? Address.fromJson(
+                json['LegalRepresentativeAddress'] as Map<String, Object?>,
+              )
+            : null,
         headQuartersAddress: json['HeadquartersAddress'] != null
             ? Address.fromJson(
                 json['HeadquartersAddress'] as Map<String, Object?>,

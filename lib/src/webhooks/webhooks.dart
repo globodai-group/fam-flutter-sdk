@@ -111,7 +111,8 @@ class Webhooks {
       try {
         json = jsonDecode(payload) as Map<String, Object?>;
       } on FormatException {
-        throw const WebhookSignatureException('Invalid JSON in webhook payload');
+        throw const WebhookSignatureException(
+            'Invalid JSON in webhook payload');
       }
     } else if (payload is Map<String, Object?>) {
       json = payload;

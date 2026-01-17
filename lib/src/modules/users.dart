@@ -27,7 +27,8 @@ import 'package:fam_sdk/src/types/types.dart';
 /// ```
 class UsersModule extends BaseModule {
   /// Creates a users module.
-  const UsersModule(HttpClient client) : super(client, '/api/v1/mangopay/users');
+  const UsersModule(HttpClient client)
+      : super(client, '/api/v1/mangopay/users');
 
   // ─────────────────────────────────────────────────────────────────────────
   // Natural Users

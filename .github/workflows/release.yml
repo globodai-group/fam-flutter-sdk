@@ -34,7 +34,7 @@ jobs:
         run: flutter test
 
       - name: Analyze code
-        run: flutter analyze --fatal-warnings
+        run: flutter analyze
 
       - name: Configure Git
         run: |

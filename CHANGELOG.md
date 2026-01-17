@@ -1,3 +1,26 @@
+## 1.1.0 - 2026-01-17
+
+- ci: add --no-fatal-infos to flutter analyze
+- ci: add pub get before format check and simplify analyze
+- ci: update Flutter version to 3.38.5
+- style: apply dart formatter
+- fix(ci): remove deprecated lint rules and fix code errors
+- fix(ci): use --fatal-warnings instead of --fatal-infos
+- ci: add GitHub Actions workflows for CI/CD
+- docs: standardize README to match TypeScript SDK structure
+- docs(example): add example.dart for pub.dev
+- feat(utils): add utility functions
+- docs: add comprehensive README documentation
+- test: add comprehensive unit tests
+- feat(core): add main Fam class and library exports
+- feat(ui): add pre-built payment widgets
+- feat(webhooks): add webhook signature verification
+- feat(modules): add all API modules
+- feat(client): add native HTTP client with retry logic
+- feat(types): add complete data models and types
+- feat(errors): add typed exception hierarchy
+- chore: initialize Flutter package structure
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

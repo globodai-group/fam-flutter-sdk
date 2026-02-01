@@ -3,7 +3,7 @@ description: >
   Official Flutter/Dart SDK for FAM API - Type-safe payment and subscription
   integrations with zero third-party dependencies. Production-ready with
   automatic retries, comprehensive error handling, and webhook support.
-version: 1.1.0
+version: 1.1.1
 homepage: https://github.com/globodai-group/fam-flutter-sdk
 repository: https://github.com/globodai-group/fam-flutter-sdk
 issue_tracker: https://github.com/globodai-group/fam-flutter-sdk/issues

@@ -1,3 +1,7 @@
+## 1.1.1 - 2026-02-01
+
+- chore: promote dev to rec - Portal types update (#11) (#12)
+
 ## 1.1.0 - 2026-01-17
 
 - ci: add --no-fatal-infos to flutter analyze

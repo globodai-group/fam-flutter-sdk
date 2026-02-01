@@ -64,6 +64,11 @@ class PortalWebsiteConfig {
     this.name,
     this.domain,
     this.logoUrl,
+    this.faviconUrl,
+    this.supportEmail,
+    this.supportUrl,
+    this.termsUrl,
+    this.privacyUrl,
     this.primaryColor,
     this.secondaryColor,
     this.accentColor,
@@ -76,6 +81,11 @@ class PortalWebsiteConfig {
         name: json['name'] as String?,
         domain: json['domain'] as String?,
         logoUrl: json['logoUrl'] as String?,
+        faviconUrl: json['faviconUrl'] as String?,
+        supportEmail: json['supportEmail'] as String?,
+        supportUrl: json['supportUrl'] as String?,
+        termsUrl: json['termsUrl'] as String?,
+        privacyUrl: json['privacyUrl'] as String?,
         primaryColor: json['primaryColor'] as String?,
         secondaryColor: json['secondaryColor'] as String?,
         accentColor: json['accentColor'] as String?,
@@ -93,6 +103,21 @@ class PortalWebsiteConfig {
   /// Logo URL.
   final String? logoUrl;
 
+  /// Favicon URL.
+  final String? faviconUrl;
+
+  /// Support email address.
+  final String? supportEmail;
+
+  /// Support URL.
+  final String? supportUrl;
+
+  /// Terms of service URL.
+  final String? termsUrl;
+
+  /// Privacy policy URL.
+  final String? privacyUrl;
+
   /// Primary brand color (hex).
   final String? primaryColor;
 
@@ -108,6 +133,11 @@ class PortalWebsiteConfig {
         if (name != null) 'name': name,
         if (domain != null) 'domain': domain,
         if (logoUrl != null) 'logoUrl': logoUrl,
+        if (faviconUrl != null) 'faviconUrl': faviconUrl,
+        if (supportEmail != null) 'supportEmail': supportEmail,
+        if (supportUrl != null) 'supportUrl': supportUrl,
+        if (termsUrl != null) 'termsUrl': termsUrl,
+        if (privacyUrl != null) 'privacyUrl': privacyUrl,
         if (primaryColor != null) 'primaryColor': primaryColor,
         if (secondaryColor != null) 'secondaryColor': secondaryColor,
         if (accentColor != null) 'accentColor': accentColor,
